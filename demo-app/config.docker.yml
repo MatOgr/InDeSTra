@@ -1,0 +1,20 @@
+---
+project-root-path: /app  # "/home/tukut/Documents/University/seminary/PBR"
+segmentation-script: /app/seg-inference.sh  # "/home/tukut/Documents/University/seminary/PBR/OneFormer-Colab/run-inference.sh"
+
+transfer-model-base-path: /app/models  # "/home/tukut/Documents/University/seminary/PBR/models"
+
+images-test-path: /app/images/test  # "/home/tukut/Documents/University/seminary/PBR/pytorch-CycleGAN-and-pix2pix/datasets/test_data"
+images-received-path: /app/images/received  # "/home/tukut/Documents/University/seminary/PBR/pytorch-CycleGAN-and-pix2pix/client/images_received"
+images-masks-path: /app/images/mask  # "/home/tukut/Documents/University/seminary/PBR/pytorch-CycleGAN-and-pix2pix/client/masks_generated"
+images-result-path: /app/images/results  # "/home/tukut/Documents/University/seminary/PBR/pytorch-CycleGAN-and-pix2pix/client/results"
+styles-list:
+  - "ArtDeco"
+  - "Classic"
+  - "Glamour"
+  - "Industrial"
+  - "Minimalistic"
+  - "Modern"
+  - "Rustic"
+  - "Scandinavian"
+  - "Vintage"

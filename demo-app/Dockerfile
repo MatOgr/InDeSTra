@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY app.py config.yml ./
+COPY app.py config.docker.yml models./
+
+ENV CONFIG_FILE_PATH /app/config.docker.yml
 
 EXPOSE 8501
 
