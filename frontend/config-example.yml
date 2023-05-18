@@ -1,0 +1,22 @@
+---
+project-root-path: "/path/to/root/dir"
+segmentation-script: "/path/to/segmentation/script.sh"
+
+transfer-model-base-path: "/path/to/transfer/models/root/dir"
+
+images-test-path: "/path/to/preprocessed/demo/images/dir"
+images-received-path: "/path/to/received/images/dir"
+images-masks-path: "/path/to/generated/masks/dir"
+images-result-path: "/path/to/transfer/results/dir"
+
+# available styles (models) 
+styles-list:
+  - "ArtDeco"
+  - "Classic"
+  - "Glamour"
+  - "Industrial"
+  - "Minimalistic"
+  - "Modern"
+  - "Rustic"
+  - "Scandinavian"
+  - "Vintage"
