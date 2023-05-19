@@ -9,8 +9,10 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
     
-ADD demo-app.tar.gz .
+COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+COPY app.py config.yml ./
 
 EXPOSE 8501
 
