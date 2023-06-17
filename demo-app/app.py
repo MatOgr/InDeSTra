@@ -7,14 +7,14 @@ import os
 import subprocess
 
 
-@st.experimental_singleton
+@st.cache_resource
 def get_config():
     with open("config.yml", "r") as f:
         config = load_yaml(f, Loader=SafeLoader)
     return config
 
 
-@st.experimental_singleton
+@st.cache_resource
 def create_images_dict(
     styles_list: list = ["ArtDeco", "Rustic"],
     img_test_path: str = "../datasets/test_data",
