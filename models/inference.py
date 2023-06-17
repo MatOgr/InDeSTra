@@ -44,6 +44,7 @@ def perform_inference(
     network_file_path="../models/ArtDeco/latest_net_G.pth",
     image_path: str = "./demo-app/images/test-image-real.png",
     model_type="generator",
+    autosave=False,
 ):
     """Universal method for inference.
 
@@ -63,7 +64,8 @@ def perform_inference(
     result = infere_image(model, tensor_input)
     image_array = tensor_to_image(result)
     new_image_path = "_fake.".join((image_path[:-4], image_path[-5:].split(".")[-1]))
-    save_img(image_array, new_image_path)
+    if autosave:
+        save_img(image_array, new_image_path)
     return image_array, new_image_path
 
 
