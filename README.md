@@ -10,21 +10,23 @@ For this reason, it is a good approach to adapt the surroundings to fit our need
 ![alt text](imgs/process_flow.png "Process flow")
 
 
-# Model
+# Models
 
-### Encoder Decoder Semantic Segmentation
+## Encoder Decoder Semantic Segmentation
 The model's architecture consists of two submodels: Semantic Segmentation and CycleGAN model. The first was pretrained on the MID ADE20K dataset, a well-known industry benchmark. 
 
 ![model enc-dec](imgs/model_enc-dec.png "Encoder decoder architecture")
 
-### CycleGAN
+## CycleGAN
 CycleGAN - the second model, has learnt characteristics of different decorations from images collected in a dataset as a part of the project.
 
 ![model disc](imgs/model_gan.png "GAN Architecture")
 
 
 # Data
-The data has been collected across two major interior design platforms. The resulting dataset consists of over 12,837 images representing nine styles of decoration. The division of classes across collections is observable in the graph below.
+The data has been collected across two major interior design platforms. The resulting dataset consists of over 12.000 images representing nine styles of decoration, from which ~4700, considered as the most valuable – emphasizing characteristics of the design styles – have been used to train the models. 
+The rest of the images, has been ordered to be annotated, to be used in further experiments. 
+The division of classes across collections of annotated images is observable in the graph below.
 ![images data](imgs/data_chart.png "Data collection")
 
 
