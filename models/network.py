@@ -1,4 +1,7 @@
+import torch
 from torch import nn
+
+import functools
 
 
 class ResnetGenerator(nn.Module):
@@ -13,15 +16,19 @@ class ResnetGenerator(nn.Module):
         padding_type="reflect",
     ):
         super(ResnetGenerator, self).__init__()
+        if type(norm_layer) == functools.partial:
+            use_bias = norm_layer.func == nn.InstanceNorm2d
+        else:
+            use_bias = norm_layer == nn.InstanceNorm2d
 
-        model = (
-            [
-                nn.ReflectionPad2d(3),
-                nn.Conv2d(in_channels, last_layer_filters, kernel_size=7, padding=0),
-                norm_layer(last_layer_filters),
-                nn.ReLU(True),
-            ],
-        )
+        model = [
+            nn.ReflectionPad2d(3),
+            nn.Conv2d(
+                in_channels, last_layer_filters, kernel_size=7, padding=0, bias=use_bias
+            ),
+            norm_layer(last_layer_filters),
+            nn.ReLU(True),
+        ]
 
         down_samp_layers = 2
         for i in range(down_samp_layers):
@@ -33,7 +40,9 @@ class ResnetGenerator(nn.Module):
                     kernel_size=3,
                     stride=2,
                     padding=1,
+                    bias=use_bias,
                 ),
+                norm_layer(last_layer_filters * multiplier * 2),
                 nn.ReLU(True),
             ]
         multiplier = 2**down_samp_layers
@@ -44,6 +53,7 @@ class ResnetGenerator(nn.Module):
                     padding_type=padding_type,
                     norm_layer=norm_layer,
                     use_dropout=use_dropout,
+                    use_bias=use_bias,
                 )
             ]
         for i in range(down_samp_layers):
@@ -56,6 +66,7 @@ class ResnetGenerator(nn.Module):
                     stride=2,
                     padding=1,
                     output_padding=1,
+                    bias=use_bias,
                 ),
                 norm_layer(int(last_layer_filters * multiplier / 2)),
                 nn.ReLU(True),
@@ -69,6 +80,16 @@ class ResnetGenerator(nn.Module):
 
     def forward(self, x):
         return self.model(x)
+
+    def load_from_dict(self, network_file_path: str, device: str = "cpu"):
+        print(f"Loading model from state dict: {network_file_path}")
+        import os
+        print(os.listdir('../'))
+        print(os.listdir('../../'))
+        print(os.listdir("/".join(network_file_path.split("/")[:-1])))
+        state_dict = torch.load(network_file_path, map_location=device)
+        self.load_state_dict(state_dict)
+        print("\tModel loaded!")
 
 
 class ResnetBlock(nn.Module):
@@ -101,6 +122,7 @@ class ResnetBlock(nn.Module):
         ]
         if use_dropout:
             conv_block += [nn.Dropout(0.5)]
+
         if padding:
             conv_block += [padding]
         conv_block += [

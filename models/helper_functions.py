@@ -1,7 +1,7 @@
 import functools
 import torch
 from torch import nn
-from network import ResnetGenerator, UnetGenerator
+# from network import ResnetGenerator, UnetGenerator
 
 
 class Identity(nn.Module):
@@ -80,62 +80,62 @@ def init_network(network, init_type="normal", init_gain=0.02, gpu_ids=[]):
     return network
 
 
-def create_generator(
-    in_channels,
-    out_channels,
-    last_layer_filters,
-    net_type="resnet_9blocks",
-    norm_layer="batch",
-    use_dropout=False,
-    init_type="normal",
-    init_gain=0.02,
-    gpu_ids=[],
-):
-    """Create a generator model."""
-    network = None
-    norm_layer = get_norm_layer(norm_type=norm_layer)
+# def create_generator(
+#     in_channels,
+#     out_channels,
+#     last_layer_filters,
+#     net_type="resnet_9blocks",
+#     norm_layer="batch",
+#     use_dropout=False,
+#     init_type="normal",
+#     init_gain=0.02,
+#     gpu_ids=[],
+# ):
+#     """Create a generator model."""
+#     network = None
+#     norm_layer = get_norm_layer(norm_type=norm_layer)
 
-    if net_type == "resnet_9blocks":
-        network = ResnetGenerator(
-            in_channels,
-            out_channels,
-            last_layer_filters,
-            norm_layer=norm_layer,
-            use_dropout=use_dropout,
-            n_blocks=9,
-        )
-    elif net_type == "resnet_6blocks":
-        network = ResnetGenerator(
-            in_channels,
-            out_channels,
-            last_layer_filters,
-            norm_layer=norm_layer,
-            use_dropout=use_dropout,
-            n_blocks=6,
-        )
-    elif net_type == "unet_128":
-        network = UnetGenerator(
-            in_channels,
-            out_channels,
-            7,
-            last_layer_filters,
-            norm_layer=norm_layer,
-            use_dropout=use_dropout,
-        )
-    elif net_type == "unet_256":
-        network = UnetGenerator(
-            in_channels,
-            out_channels,
-            8,
-            last_layer_filters,
-            norm_layer=norm_layer,
-            use_dropout=use_dropout,
-        )
-    else:
-        raise NotImplementedError(
-            f"Generator model name [{net_type}] is not recognized"
-        )
-    return init_network(network, init_type, init_gain, gpu_ids)
+#     if net_type == "resnet_9blocks":
+#         network = ResnetGenerator(
+#             in_channels,
+#             out_channels,
+#             last_layer_filters,
+#             norm_layer=norm_layer,
+#             use_dropout=use_dropout,
+#             n_blocks=9,
+#         )
+#     elif net_type == "resnet_6blocks":
+#         network = ResnetGenerator(
+#             in_channels,
+#             out_channels,
+#             last_layer_filters,
+#             norm_layer=norm_layer,
+#             use_dropout=use_dropout,
+#             n_blocks=6,
+#         )
+#     elif net_type == "unet_128":
+#         network = UnetGenerator(
+#             in_channels,
+#             out_channels,
+#             7,
+#             last_layer_filters,
+#             norm_layer=norm_layer,
+#             use_dropout=use_dropout,
+#         )
+#     elif net_type == "unet_256":
+#         network = UnetGenerator(
+#             in_channels,
+#             out_channels,
+#             8,
+#             last_layer_filters,
+#             norm_layer=norm_layer,
+#             use_dropout=use_dropout,
+#         )
+#     else:
+#         raise NotImplementedError(
+#             f"Generator model name [{net_type}] is not recognized"
+#         )
+#     return init_network(network, init_type, init_gain, gpu_ids)
 
 
 def create_discriminator():
