@@ -1,13 +1,13 @@
 import numpy as np
 from PIL import Image
 import functools
-from helper_functions import Identity
+from .helper_functions import Identity
 
 import torch
 from torch.utils.data import DataLoader, Dataset
 from torchvision import io, transforms
 
-import network
+from .network import ResnetGenerator
 
 
 class InteriorDataset(Dataset):
@@ -52,7 +52,7 @@ def get_model_architecture_instance(
     init_type="normal",
 ):
     if model_arch == "resnet":
-        model_instance = network.ResnetGenerator(
+        model_instance = ResnetGenerator(
             in_channels=3,
             out_channels=3,
             last_layer_filters=64,

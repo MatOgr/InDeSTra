@@ -1,4 +1,4 @@
-from utils import (
+from .utils import (
     InteriorDataset,
     get_model_architecture_instance,
     image_to_tensor,

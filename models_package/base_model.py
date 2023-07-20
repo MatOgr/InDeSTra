@@ -2,7 +2,7 @@ import os
 import torch
 from collections import OrderedDict
 from abc import ABC, abstractmethod
-from network import get_scheduler
+from .network import get_scheduler
 
 
 class BaseModel(ABC):
