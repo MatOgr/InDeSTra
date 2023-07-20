@@ -4,12 +4,22 @@ from yaml import load as load_yaml, SafeLoader
 from PIL import Image
 
 import os
+import sys
 import subprocess
+
+
+# SCRIPT_DIR = os.path.dirname(os.path.abspath('/home/tukut/Documents/University/seminary/PBR/InDeSTra/demo-app/models'))
+# sys.path.append(os.path.dirname(SCRIPT_DIR))
+print(os.path.join(os.path.dirname(__file__), '../models_package'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+
+import models_package.inference as models_inference
 
 
 @st.cache_resource
 def get_config():
-    with open("config.yml", "r") as f:
+    config_path = os.environ.get("CONFIG_FILE_PATH", "config.yml")
+    with open(config_path, "r") as f:
         config = load_yaml(f, Loader=SafeLoader)
     return config
 
@@ -91,7 +101,7 @@ def create_new_design(image_path: str, style: str, model_path: str):
     )
 
 
-def perform_inference(
+def generate_image(
     style, image_path, test_image: bool = False, config=None, state=None
 ):
     #################### Segmentation mask part
@@ -120,17 +130,23 @@ def perform_inference(
 
     #################### Style transfer part
     state.text("Generating new design...")
-    create_new_design(mask_path, style, config["transfer-model-base-path"])
-    state.text("Done! Enjoy the results!")
-    image = Image.open(
-        f"{config['images-result-path']}/{style}/test_latest/images/{file_name.split('.')[0]}_fake.png"
+    # create_new_design(mask_path, style, config["transfer-model-base-path"])
+    image, image_path = models_inference.perform_inference(
+        network_file_path=f'{config["transfer-model-base-path"]}/{style}/latest_net_G.pth',
+        image_path=f"{mask_path}/{file_name}",
     )
+    print("Image path from inference.py is:", image_path)
+    state.text("Done! Enjoy the results!")
+    # image = Image.open(
+    #     # f"{config['images-result-path']}/{style}/test_latest/images/{file_name.split('.')[0]}_fake.png"
+    #     image_path
+    # )
     os.remove(f"{mask_path}/{file_name}")
     return image
 
 
-def generate_design(data):
-    image = perform_inference(
+def call_for_inference(data):
+    image = generate_image(
         data["model_style"],
         data["image"],
         data["test_image"],
@@ -183,7 +199,7 @@ if image_loaded is not None:
     )
     if st.button("Generate Design"):
         data_load_state = st.text("Generating design...")
-        generated_image = generate_design(
+        generated_image = call_for_inference(
             {
                 "image": image_path,
                 "model_style": chosen_style,

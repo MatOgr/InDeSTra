@@ -42,7 +42,7 @@ def prepare_input(image, model_type="generator", device="cpu"):
 
 def perform_inference(
     network_file_path="../models/ArtDeco/latest_net_G.pth",
-    image_path: str = "./demo-app/images/test-image-real.png",
+    image_path: str = "./demo-app/images/tests/test-image-real.png",
     model_type="generator",
     autosave=False,
 ):
