@@ -10,14 +10,21 @@ import subprocess
 
 # SCRIPT_DIR = os.path.dirname(os.path.abspath('/home/tukut/Documents/University/seminary/PBR/InDeSTra/demo-app/models'))
 # sys.path.append(os.path.dirname(SCRIPT_DIR))
-print(os.path.join(os.path.dirname(__file__), '../models_package'))
-sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
+print(os.path.join(os.path.dirname(__file__), "../models_package"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
 
 import models_package.inference as models_inference
 
 
 @st.cache_resource
 def get_config():
+    """Read config file and return its content.
+
+    TODO: reformat the way of defining the paths, vars, etc.
+
+    Returns:
+        Any: contents of the yaml config file
+    """
     config_path = os.environ.get("CONFIG_FILE_PATH", "config.yml")
     with open(config_path, "r") as f:
         config = load_yaml(f, Loader=SafeLoader)
@@ -29,6 +36,15 @@ def create_images_dict(
     styles_list: list = ["ArtDeco", "Rustic"],
     img_test_path: str = "../datasets/test_data",
 ):
+    """Create a dictionary of test images to be (optionally) used in the app by default.
+
+    Args:
+        styles_list (list, optional): List of available styles, being directory names at the same time. Defaults to ["ArtDeco", "Rustic"].
+        img_test_path (str, optional): Root directory to use for the test images. Defaults to "../datasets/test_data".
+
+    Returns:
+        dict: Dictionary of test images.
+    """
     images_dict = {"Select Image": None, "Upload Image": "upload"}
     for i, style in enumerate(sorted(styles_list * 4)):
         images_dict[f"{style}_{i % 4 + 1}"] = (
@@ -39,6 +55,11 @@ def create_images_dict(
 
 
 def choose_file():
+    """Use file uploader to choose an image.
+
+    Returns:
+        tuple | None: Tuple containing the image and its name; None if no image was chosen.
+    """
     uploaded_file = st.file_uploader(
         "Choose an image",
         help="Browse your files and upload an interior image of your choice",
@@ -78,6 +99,7 @@ def create_mask(
 
 
 def create_new_design(image_path: str, style: str, model_path: str):
+    """TODO: To be removed"""
     subprocess.call(
         [
             "python3",
@@ -107,7 +129,7 @@ def generate_image(
     #################### Segmentation mask part
     print(f"Image path: {image_path}")
     file_name = image_path.split("/")[-1]
-    mask_path = config["images-masks-path"]
+    mask_path = config["images-app-root-path"] + "/mask"
     if test_image:  # We can used already existing segmentation masks
         if state:
             state.text("Using existing segmentation mask...")
@@ -115,8 +137,6 @@ def generate_image(
             f"{mask_path}/{file_name}"
         )
     else:  # We need to create a segmentation mask
-        # mask_path = config["images-masks-path"]
-        # mask_file_name = "/segmentation.jpg"
         create_mask(
             image_path,
             config["segmentation-script"],
@@ -126,21 +146,19 @@ def generate_image(
         )
     mask_image = Image.open(f"{mask_path}/{file_name}")
     st.image(mask_image, caption="Generated segmentation mask.", use_column_width=True)
-    # image.save(f'{config["images-received-path"]}/{mask_file_name}_mask.jpg')
 
     #################### Style transfer part
+
     state.text("Generating new design...")
+    # TODO: To be removed
     # create_new_design(mask_path, style, config["transfer-model-base-path"])
+    # TODO END
     image, image_path = models_inference.perform_inference(
         network_file_path=f'{config["transfer-model-base-path"]}/{style}/latest_net_G.pth',
         image_path=f"{mask_path}/{file_name}",
     )
     print("Image path from inference.py is:", image_path)
     state.text("Done! Enjoy the results!")
-    # image = Image.open(
-    #     # f"{config['images-result-path']}/{style}/test_latest/images/{file_name.split('.')[0]}_fake.png"
-    #     image_path
-    # )
     os.remove(f"{mask_path}/{file_name}")
     return image
 
@@ -158,7 +176,7 @@ def call_for_inference(data):
 
 ### Load config params
 config = get_config()
-IMAGES_DICT = create_images_dict(config["styles-list"], config["images-test-path"])
+IMAGES_DICT = create_images_dict(config["styles-list"], config["images-test-root-path"])
 
 
 ######################          website elements          ######################
@@ -187,9 +205,9 @@ elif IMAGES_DICT[uploaded_file] == "upload":
 if image_loaded is not None:
     print("\nFile uploaded:", uploaded_file)
     if test_image:
-        image_path = f'{config["images-test-path"]}/{uploaded_file.split("_")[0]}/{uploaded_file.split("_")[1]}.jpg'
+        image_path = f'{config["images-test-root-path"]}/{uploaded_file.split("_")[0]}/{uploaded_file.split("_")[1]}.jpg'
     else:
-        image_path = f'{config["images-received-path"]}/{uploaded_file}'
+        image_path = f'{config["images-app-root-path"]}/received/{uploaded_file}'
     print(f"\n\nSave image path: {image_path}\n\n")
     image_loaded.save(image_path)
     st.image(image_loaded, caption="Chosen test image.", use_column_width=True)
